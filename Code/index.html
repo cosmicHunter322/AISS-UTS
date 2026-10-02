@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Pajak BAPENDA</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px; text-align: center; }
+        .card { background: white; max-width: 700px; margin: 50px auto; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1 { color: #1e3a8a; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background-color: #1e3a8a; color: white; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Data Pajak</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>No. Transaksi</th>
+                    <th>Jenis Pajak</th>
+                    <th>NIK</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="pajak-data">
+                <tr><td colspan="4"></td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        fetch('api.php')
+            .then(response => response.json())
+            .then(data => {
+                let html = '';
+                data.forEach(row => {
+                    html += `<tr>
+                        <td>${row.no_transaksi}</td>
+                        <td>${row.jenis_pajak}</td>
+                        <td>${row.nik_decoded}</td>
+                        <td>${row.status_pembayaran}</td>
+                    </tr>`;
+                });
+                document.getElementById('pajak-data').innerHTML = html;
+            })
+            .catch(err => {
+                document.getElementById('pajak-data').innerHTML = '<tr><td colspan="4">Gagal memuat data.</td></tr>';
+            });
+    </script>
+</body>
+</html>

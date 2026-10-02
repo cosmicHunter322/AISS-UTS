@@ -1,0 +1,17 @@
+server {
+    listen 80;
+    server_name localhost;
+    root /usr/share/nginx/html;
+    index index.html index.php;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    location ~ \.php$ {
+        fastcgi_pass bapenda-php:9000;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME /usr/share/nginx/html$fastcgi_script_name;
+        include fastcgi_params;
+    }
+}

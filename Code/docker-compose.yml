@@ -1,0 +1,77 @@
+version: '3.8'
+
+networks:
+  dmz_net:
+    driver: bridge
+  internal_net:
+    driver: bridge
+    internal: true
+
+services:
+  # Nginx Reverse Proxy + WAF
+  reverse-proxy:
+    image: nginx:alpine
+    container_name: bapenda-proxy
+    restart: always
+    ports:
+      - "8443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/certs:/etc/nginx/certs:ro
+    networks:
+      - dmz_net
+      - internal_net
+    depends_on:
+      - iam-authelia
+      - bapenda-app
+
+  # Authelia SSO + MFA (TOTP)
+  iam-authelia:
+    image: authelia/authelia:latest
+    container_name: bapenda-iam
+    restart: always
+    volumes:
+      - ./authelia:/config
+    networks:
+      - internal_net
+    environment:
+      - TZ=Asia/Jakarta
+
+  # BAPENDA Web App (Nginx Web Server)
+  bapenda-app:
+    image: nginx:alpine
+    container_name: bapenda-web
+    restart: always
+    volumes:
+      - ./app:/usr/share/nginx/html:ro
+      - ./nginx/app-nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - internal_net
+    depends_on:
+      - bapenda-php
+
+  # PHP-FPM Engine (Backend API & PostgreSQL Connector)
+  bapenda-php:
+    build: ./app
+    container_name: bapenda-php
+    restart: always
+    volumes:
+      - ./app:/usr/share/nginx/html
+    networks:
+      - internal_net
+    depends_on:
+      - database
+
+  # PostgreSQL Database
+  database:
+    image: postgres:15-alpine
+    container_name: bapenda-db
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER:-bapenda_admin}
+      POSTGRES_PASSWORD: ${DB_PASS:-bapenda_secure_password_2026}
+      POSTGRES_DB: ${DB_NAME:-db_bapenda_pajak}
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+    networks:
+      - internal_net

@@ -1,0 +1,47 @@
+theme: light
+
+server:
+  address: "tcp://0.0.0.0:9091/authelia"
+
+identity_validation:
+  reset_password:
+    jwt_secret: "bapenda_jwt_secret_key_super_long_and_secure_2026_x18"
+
+authentication_backend:
+  file:
+    path: "/config/users_database.yml"
+
+access_control:
+  default_policy: "deny"
+  rules:
+    - domain: "bapenda.local"
+      policy: "two_factor"
+
+session:
+  name: "authelia_session"
+  secret: "authelia_session_secret_bapenda_super_secure_pass_123"
+  expiration: "1h"
+  inactivity: "5m"
+  cookies:
+    - domain: "bapenda.local"
+      authelia_url: "https://bapenda.local:8443/authelia"
+      default_redirection_url: "https://bapenda.local:8443/"
+
+regulation:
+  max_retries: 3
+  find_time: "2m"
+  ban_time: "5m"
+
+storage:
+  encryption_key: "32_bytes_aes_key_bapenda_sec!"
+  local:
+    path: "/config/db.sqlite"
+
+notifier:
+  filesystem:
+    filename: "/config/notification.txt"
+
+totp:
+  issuer: "BAPENDA-Security-Portal"
+  period: 30
+  skew: 1

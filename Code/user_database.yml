@@ -1,0 +1,14 @@
+users:
+  admin_bapenda:
+    displayname: "Administrator BAPENDA"
+    password: "$argon2id$v=19$m=19456,t=2,p=1$het41/+kDUMiM7ePMSyr0w$FKjVuBObKJQZTYZS3aYyTGM78kEs/tdbIcf93zbaHd0"
+    email: "admin@bapenda.go.id"
+    groups:
+      - "admin"
+
+  petugas_bapenda:
+    displayname: "Petugas Pajak BAPENDA"
+    password: "$argon2id$v=19$m=19456,t=2,p=1$het41/+kDUMiM7ePMSyr0w$FKjVuBObKJQZTYZS3aYyTGM78kEs/tdbIcf93zbaHd0"
+    email: "petugas@bapenda.go.id"
+    groups:
+      - "admin"
